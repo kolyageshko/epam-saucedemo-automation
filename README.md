@@ -31,6 +31,5 @@
 
 ### Test structure
 - All tests are located in `src/test/java/org/epam/saucedemo/`
-- Main class (if needed) in `src/main/java/org/epam/saucedemo/`
 - Logging is configured via Log4j
 - Parallel execution via Surefire Plugin 
