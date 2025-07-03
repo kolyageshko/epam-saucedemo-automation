@@ -5,51 +5,40 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.Arguments;
 
 public class LoginTest extends BaseTest {
 
-    @ParameterizedTest
-    @MethodSource("org.epam.saucedemo.BaseTest#browserProvider")
-    void testLoginWithEmptyCredentials(String browser) {
-        logger.info("UC-1: Test Login form with empty credentials on {}", browser);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.open();
-        loginPage.setUsername("anyuser");
-        loginPage.setPassword("anyPassword");
-        loginPage.clearUsernameByKeys();
-        loginPage.clearPasswordByKeys();
-        loginPage.clickLogin();
-        String error = loginPage.getErrorMessage();
-        logger.info("Error message: {}", error);
-        MatcherAssert.assertThat(error, containsString("Username is required"));
+    static Stream<Arguments> credentialsProvider() {
+        return Stream.of(
+            Arguments.of("anyuser", "anyPassword", true, true, "Username is required"),
+            Arguments.of("anyuser", "anyPassword", false, true, "Password is required"),
+            Arguments.of("standard_user", "secret_sauce", false, false, "https://www.saucedemo.com/inventory.html")
+        );
     }
 
     @ParameterizedTest
-    @MethodSource("org.epam.saucedemo.BaseTest#browserProvider")
-    void testLoginWithEmptyPassword(String browser) {
-        logger.info("UC-2: Test Login form with credentials by passing Username on {}", browser);
+    @MethodSource("credentialsProvider")
+    void testLogin(String username, String password, boolean clearUsername, boolean clearPassword, String expected) {
+        logger.info("Test with username='{}', password='{}', clearUsername={}, clearPassword={}, expected='{}', thread={}",
+                username, password, clearUsername, clearPassword, expected, Thread.currentThread().getId());
         LoginPage loginPage = new LoginPage(driver);
         loginPage.open();
-        loginPage.setUsername("anyuser");
-        loginPage.setPassword("anyPassword");
-        loginPage.clearPasswordByKeys();
+        loginPage.setUsername(username);
+        loginPage.setPassword(password);
+        if (clearUsername) loginPage.clearUsernameByKeys();
+        if (clearPassword) loginPage.clearPasswordByKeys();
         loginPage.clickLogin();
-        String error = loginPage.getErrorMessage();
-        logger.info("Error message: {}", error);
-        MatcherAssert.assertThat(error, containsString("Password is required"));
-    }
 
-    @ParameterizedTest
-    @MethodSource("org.epam.saucedemo.BaseTest#browserProvider")
-    void testLoginWithValidCredentials(String browser) {
-        logger.info("UC-3: Test Login form with valid credentials on {}", browser);
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.open();
-        loginPage.setUsername("standard_user");
-        loginPage.setPassword("secret_sauce");
-        loginPage.clickLogin();
-        String currentUrl = driver.getCurrentUrl();
-        logger.info("Current URL after login: {}", currentUrl);
-        MatcherAssert.assertThat(currentUrl, equalTo("https://www.saucedemo.com/inventory.html"));
+        if (expected.startsWith("http")) {
+            String currentUrl = driver.getCurrentUrl();
+            logger.info("Current URL after login: {}", currentUrl);
+            MatcherAssert.assertThat(currentUrl, equalTo(expected));
+        } else {
+            String error = loginPage.getErrorMessage();
+            logger.info("Error message: {}", error);
+            MatcherAssert.assertThat(error, containsString(expected));
+        }
     }
 } 
