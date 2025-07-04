@@ -8,10 +8,10 @@ import org.openqa.selenium.WebElement;
 public class LoginPage {
     private final WebDriver driver;
 
-    private final By usernameInput = By.xpath("//input[@data-test='username']");
-    private final By passwordInput = By.xpath("//input[@data-test='password']");
-    private final By loginButton = By.xpath("//input[@data-test='login-button']");
-    private final By errorMessage = By.xpath("//h3[@data-test='error']");
+    private final By usernameInput = By.cssSelector("input[data-test='username']");
+    private final By passwordInput = By.cssSelector("input[data-test='password']");
+    private final By loginButton = By.cssSelector("input[data-test='login-button']");
+    private final By errorMessage = By.cssSelector("h3[data-test='error']");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -29,14 +29,6 @@ public class LoginPage {
     public void setPassword(String password) {
         driver.findElement(passwordInput).clear();
         driver.findElement(passwordInput).sendKeys(password);
-    }
-
-    public void clearUsername() {
-        driver.findElement(usernameInput).clear();
-    }
-
-    public void clearPassword() {
-        driver.findElement(passwordInput).clear();
     }
 
     public void clickLogin() {

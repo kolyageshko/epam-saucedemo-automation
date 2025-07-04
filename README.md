@@ -8,22 +8,13 @@
 - UC-3: Test Login form with credentials by passing Username & Password
 
 ### Features
-- Browser selection is handled via system property: `-Dbrowser=chrome` or `-Dbrowser=edge`.
-- Parallel execution is enabled via JUnit 5 platform properties and Maven Surefire.
-- Logging includes thread id to verify parallel execution.
-
-### Requirements
-- Test Automation tool: Selenium WebDriver
-- Project Builder: Maven
-- Browsers: Edge, Chrome
-- Locators: XPath
-- Test Runner: JUnit
-- Assertions: Hamcrest
-- Logging: Log4j
-- Parallel execution, DataProvider, parameterization
+- Test framework: TestNG
+- Assertions: AssertJ
+- Browser selection is handled via system property: `-Dbrowser=chrome`, `-Dbrowser=firefox` or `-Dbrowser=edge`.
+- Parallel execution is enabled via Maven Surefire и TestNG.
 
 ### How to run
-1. Install Maven, JDK 11+ and Chrome/Edge.
+1. Install Maven, JDK 11+ and Chrome/Firefox/Edge.
 2. Run tests with:
    ```
    mvn clean test
@@ -31,5 +22,6 @@
 3. To select browser use system property:
    ```
    mvn clean test -Dbrowser=chrome
+   mvn clean test -Dbrowser=firefox
    mvn clean test -Dbrowser=edge
    ```
